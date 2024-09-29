@@ -1,0 +1,7 @@
+---
+name: PacketCorrector
+version: 0.0.1
+main: Echore\PacketCorrector\Main
+api: 5.16.0
+src-namespace-prefix: Echore\PacketCorrector
+...
