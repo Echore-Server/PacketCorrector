@@ -149,7 +149,7 @@ class WrappedLevelChunkPacket extends DataPacket implements ClientboundPacket {
 		if ($this->usedBlobHashes !== null) {
 			VarInt::writeUnsignedInt($out, count($this->usedBlobHashes));
 			foreach ($this->usedBlobHashes as $hash) {
-				LE::writeUnsignedLong($out, $hash);
+				$out->writeByteArray($hash);
 			}
 		}
 		CommonTypes::putString($out, $this->extraPayload);
