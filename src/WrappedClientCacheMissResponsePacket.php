@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Echore\PacketCorrector;
 
 use Echore\PacketCorrector\types\WrappedChunkCacheBlob;
+use pmmp\encoding\ByteBufferReader;
+use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\VarInt;
 use pocketmine\network\mcpe\protocol\ClientboundPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PacketHandlerInterface;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 
 class WrappedClientCacheMissResponsePacket extends DataPacket implements ClientboundPacket {
@@ -33,14 +37,14 @@ class WrappedClientCacheMissResponsePacket extends DataPacket implements Clientb
 		return false;
 	}
 
-	protected function decodePayload(PacketSerializer $in): void {
+	protected function decodePayload(ByteBufferReader $in): void {
 	}
 
-	protected function encodePayload(PacketSerializer $out): void {
-		$out->putUnsignedVarInt(count($this->blobs));
+	protected function encodePayload(ByteBufferWriter $out): void {
+		VarInt::writeUnsignedInt($out, count($this->blobs));
 		foreach ($this->blobs as $blob) {
-			$out->put($blob->getHashBinary());
-			$out->putString($blob->getPayload());
+			$out->writeByteArray($blob->getHashBinary());
+			CommonTypes::putString($out, $blob->getPayload());
 		}
 	}
 }

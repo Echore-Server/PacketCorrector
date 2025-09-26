@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Echore\PacketCorrector;
 
+use pmmp\encoding\ByteBufferReader;
+use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\VarInt;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PacketHandlerInterface;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
@@ -50,17 +53,17 @@ class WrappedClientCacheBlobStatusPacket extends DataPacket implements Serverbou
 		return false;
 	}
 
-	protected function decodePayload(PacketSerializer $in): void {
-		$missCount = $in->getUnsignedVarInt();
-		$hitCount = $in->getUnsignedVarInt();
+	protected function decodePayload(ByteBufferReader $in): void {
+		$missCount = VarInt::readUnsignedInt($in);
+		$hitCount = VarInt::readUnsignedInt($in);
 		for ($i = 0; $i < $missCount; ++$i) {
-			$this->missHashes[] = $in->get(8);
+			$this->missHashes[] = $in->readByteArray(8);
 		}
 		for ($i = 0; $i < $hitCount; ++$i) {
-			$this->hitHashes[] = $in->get(8);
+			$this->hitHashes[] = $in->readByteArray(8);
 		}
 	}
 
-	protected function encodePayload(PacketSerializer $out): void {
+	protected function encodePayload(ByteBufferWriter $out): void {
 	}
 }
